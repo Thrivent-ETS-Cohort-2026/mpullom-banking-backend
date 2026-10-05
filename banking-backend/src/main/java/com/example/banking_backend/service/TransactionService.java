@@ -1,0 +1,27 @@
+package com.example.banking_backend.service;
+
+import com.example.banking_backend.model.Transaction;
+import com.example.banking_backend.model.TransactionRequest;
+import com.example.banking_backend.repository.TransactionRepository;
+
+import jakarta.transaction.Transactional;
+
+public class TransactionService {
+    private TransactionRepository transactions;
+
+    public TransactionService() {
+    }
+
+    @Transactional
+    public Transaction createTransaction(TransactionRequest newTransaction) {
+        Transaction transaction = new Transaction(
+                newTransaction.getAccountNumber(),
+                newTransaction.getTransactionType(),
+                newTransaction.getAmount(),
+                newTransaction.getTimestamp());
+
+        transactions.save(transaction);
+
+        return transaction;
+    }
+}
