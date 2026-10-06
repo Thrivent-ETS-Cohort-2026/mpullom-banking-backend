@@ -1,6 +1,7 @@
 package com.example.banking_backend.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,20 +16,25 @@ import com.example.banking_backend.repository.TransactionRepository;
 @Service
 public class TransactionService {
 
-    private final TransactionRepository transactionRepository;
-    private final AccountRepository accountRepository;
+    private final TransactionRepository transactions;
+    private final AccountRepository accounts;
 
     public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository) {
-        this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
+        this.transactions = transactionRepository;
+        this.accounts = accountRepository;
     }
 
     @Transactional
     public Transaction createTransaction(TransactionRequest request) {
-        Account account = accountRepository.findById(request.accountNumber())
-                .orElseThrow(() -> new IllegalArgumentException("Account not found with number: " + request.accountNumber()));
+        if (request == null || request.accountNumber() == null) {
+            throw new IllegalArgumentException("Account number must be provided.");
+        }
 
-        if (request.amount() == null || request.amount() <= 0) {
+        Account account = accounts.findById(request.accountNumber())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Account not found with number: " + request.accountNumber()));
+
+        if (request.amount() <= 0) {
             throw new IllegalArgumentException("Transaction amount must be greater than zero.");
         }
 
@@ -39,17 +45,26 @@ public class TransactionService {
             account.setBalance(account.getBalance() - request.amount());
         } else if (request.transactionType() == TransactionType.DEPOSIT) {
             account.setBalance(account.getBalance() + request.amount());
+        } else {
+            throw new IllegalArgumentException("Unsupported transaction type: " + request.transactionType());
         }
 
-        accountRepository.save(account);
+        accounts.save(account);
 
         Transaction transaction = new Transaction(
-            account.getAccountNumber(), 
-            request.transactionType(),
-            request.amount(),
-            (request.timestamp() != null) ? request.timestamp() : LocalDateTime.now()
-        );
+                account.getAccountNumber(),
+                request.transactionType(),
+                request.amount(),
+                (request.timestamp() != null) ? request.timestamp() : LocalDateTime.now());
 
-        return transactionRepository.save(transaction);
+        return transactions.save(transaction);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Transaction> getTransactionsByAccountNum(Long accountNumber) {
+        if (accountNumber == null) {
+            throw new IllegalArgumentException("Account number cannot be null.");
+        }
+        return transactions.findByAccountNumber(accountNumber);
     }
 }

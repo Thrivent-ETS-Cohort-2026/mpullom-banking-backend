@@ -16,14 +16,12 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountNumber;
 
-    @NotNull(message = "Customer ID failed Spring NotBlank validation")
     @Column(name = "customer_id")
     private Long customerId;
 
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
 
-    @NotNull(message = "balance deposit failed Spring NotBlank validation")
     @Column(name = "balance")
     private double balance;
 
@@ -33,7 +31,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(AccountType accountType, @Valid Long customerId, @Valid double initialBalance, AccountStatus accountStatus) {
+    public Account(AccountType accountType, Long customerId, double initialBalance, AccountStatus accountStatus) {
         this.accountType = accountType;
         this.balance = initialBalance;
         this.accountStatus = accountStatus;

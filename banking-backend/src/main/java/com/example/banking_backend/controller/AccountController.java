@@ -1,5 +1,7 @@
 package com.example.banking_backend.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.banking_backend.dto.AccountRequest;
-import com.example.banking_backend.dto.TransactionRequest;
 import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.AccountStatus;
 import com.example.banking_backend.model.Transaction;
@@ -55,14 +56,9 @@ public class AccountController {
         accountService.deleteAccount(acctNo);
         return ResponseEntity.noContent().build();
     }
-
-    @PostMapping("/{acctNo}/transactions")
-    public ResponseEntity<Transaction> recordTransaction(
-            @PathVariable Long acctNo,
-            @RequestBody TransactionRequest newTransaction) {
-
-        TransactionRequest updatedRequest = newTransaction.withAccountNumber(acctNo);
-        Transaction savedTransaction = transactionService.createTransaction(updatedRequest);
-        return new ResponseEntity<>(savedTransaction, HttpStatus.CREATED);
+    @GetMapping ("/{acctNo}/transactions")
+    public ResponseEntity<List<Transaction>> recordTransaction(@PathVariable Long acctNo) {
+        List<Transaction> transactions = transactionService.getTransactionsByAccountNum(acctNo);
+        return ResponseEntity.ok(transactions);
     }
 }
