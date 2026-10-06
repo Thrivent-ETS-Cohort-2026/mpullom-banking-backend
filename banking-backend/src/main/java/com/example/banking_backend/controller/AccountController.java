@@ -20,6 +20,8 @@ import com.example.banking_backend.model.Transaction;
 import com.example.banking_backend.service.AccountService;
 import com.example.banking_backend.service.TransactionService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
@@ -33,7 +35,7 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<Account> createAccount(@RequestBody AccountRequest newAccount) {
+    public ResponseEntity<Account> createAccount(@Valid @RequestBody AccountRequest newAccount) {
         Account savedAccount = accountService.createAccount(newAccount);
         return new ResponseEntity<>(savedAccount, HttpStatus.CREATED);
     }
@@ -46,7 +48,7 @@ public class AccountController {
     @PutMapping("/{acctNo}/status")
     public ResponseEntity<Account> updateAccountStatus(
             @PathVariable Long acctNo,
-            @RequestBody AccountStatus newStatus) {
+            @Valid @RequestBody AccountStatus newStatus) {
         Account savedAccount = accountService.updateAccountStatus(acctNo, newStatus);
         return ResponseEntity.ok(savedAccount);
     }

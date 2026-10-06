@@ -18,13 +18,15 @@ import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.Customer;
 import com.example.banking_backend.service.CustomerService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
     private CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody CustomerRequest newCustomer) {
+    public ResponseEntity<Customer> createCustomer(@Valid @RequestBody CustomerRequest newCustomer) {
         Customer savedCustomer = customerService.createCustomer(newCustomer);
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
@@ -40,7 +42,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateAccountStatus(@PathVariable Long id, CustomerRequest customerUpdates) {
+    public ResponseEntity<Customer> updateAccountStatus(@PathVariable Long id, @Valid @RequestBody CustomerRequest customerUpdates) {
         Customer savedCustomer = customerService.updateCustomer(id, customerUpdates);
         return ResponseEntity.ok(savedCustomer);
     }
@@ -51,7 +53,6 @@ public class CustomerController {
         return ResponseEntity.noContent().build();
     }
 
-    // /api/customers/{id}/accounts GET
     @GetMapping("/{id}/accounts")
     public ResponseEntity<List<Account>> getCustomerAccounts(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.getCustomerAccounts(id));

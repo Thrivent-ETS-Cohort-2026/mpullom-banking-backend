@@ -11,20 +11,20 @@ import com.example.banking_backend.model.Transfer;
 import com.example.banking_backend.service.TransferService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.validation.Valid;
 
-    @RestController
+@RestController
 @RequestMapping("/api/transfers")
 public class TransferController {
-    
+
     private TransferService transferService;
 
     public TransferController(TransferService transferService) {
         this.transferService = transferService;
     }
-
-    // /api/transfers	POSt
+    
     @PostMapping
-    public ResponseEntity<Transfer> createAccount(@RequestBody TransferRequest newTransfer) {
+    public ResponseEntity<Transfer> createAccount(@Valid @RequestBody TransferRequest newTransfer) {
         Transfer savedTransfer = transferService.transferFunds(newTransfer);
         return new ResponseEntity<>(savedTransfer, HttpStatus.CREATED);
 
