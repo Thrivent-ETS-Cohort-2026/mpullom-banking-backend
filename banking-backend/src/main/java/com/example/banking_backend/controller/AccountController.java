@@ -2,13 +2,20 @@ package com.example.banking_backend.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.example.banking_backend.dto.AccountRequest;
+import com.example.banking_backend.dto.TransactionRequest;
 import com.example.banking_backend.model.Account;
-import com.example.banking_backend.model.AccountRequest;
 import com.example.banking_backend.model.AccountStatus;
 import com.example.banking_backend.model.Transaction;
-import com.example.banking_backend.model.TransactionRequest;
 import com.example.banking_backend.service.AccountService;
 import com.example.banking_backend.service.TransactionService;
 
@@ -17,14 +24,14 @@ import com.example.banking_backend.service.TransactionService;
 public class AccountController {
 
     private final AccountService accountService;
-    private TransactionService transactionService;
+    private final TransactionService transactionService;
 
     public AccountController(AccountService accountService, TransactionService transactionService) {
         this.accountService = accountService;
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Account> createAccount(@RequestBody AccountRequest newAccount) {
         Account savedAccount = accountService.createAccount(newAccount);
         return new ResponseEntity<>(savedAccount, HttpStatus.CREATED);
@@ -35,24 +42,27 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccountByNum(acctNo));
     }
 
-    @PutMapping("/{acctNo}")
-    public ResponseEntity<Account> updateAccountStatus(@PathVariable Long acctNo, AccountStatus newStatus) {
+    @PutMapping("/{acctNo}/status")
+    public ResponseEntity<Account> updateAccountStatus(
+            @PathVariable Long acctNo,
+            @RequestBody AccountStatus newStatus) {
         Account savedAccount = accountService.updateAccountStatus(acctNo, newStatus);
         return ResponseEntity.ok(savedAccount);
     }
 
     @DeleteMapping("/{acctNo}")
-    public ResponseEntity<Void> deleteTicket(@PathVariable Long acctNo) {
+    public ResponseEntity<Void> deleteAccount(@PathVariable Long acctNo) {
         accountService.deleteAccount(acctNo);
-        ;
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{acctNo}/transactions")
-    public ResponseEntity<Transaction> recordTransaction(@PathVariable Long acctNo,
+    public ResponseEntity<Transaction> recordTransaction(
+            @PathVariable Long acctNo,
             @RequestBody TransactionRequest newTransaction) {
-        newTransaction.setAccountNumber(acctNo);
-        Transaction savedTransaction = transactionService.createTransaction(newTransaction);
+
+        TransactionRequest updatedRequest = newTransaction.withAccountNumber(acctNo);
+        Transaction savedTransaction = transactionService.createTransaction(updatedRequest);
         return new ResponseEntity<>(savedTransaction, HttpStatus.CREATED);
     }
 }

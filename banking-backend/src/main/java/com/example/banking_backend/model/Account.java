@@ -1,11 +1,9 @@
 package com.example.banking_backend.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,22 +16,24 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountNumber;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @NotNull(message = "Customer ID failed Spring NotBlank validation")
+    @Column(name = "customer_id")
+    private Long customerId;
+
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
 
     @NotNull(message = "balance deposit failed Spring NotBlank validation")
     @Column(name = "balance")
-    private Long balance;
+    private double balance;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
 
     public Account() {
     }
 
-    public Account(AccountType accountType, @Valid Long initialBalance, AccountStatus accountStatus) {
+    public Account(AccountType accountType, @Valid Long customerId, @Valid double initialBalance, AccountStatus accountStatus) {
         this.accountType = accountType;
         this.balance = initialBalance;
         this.accountStatus = accountStatus;
@@ -47,11 +47,11 @@ public class Account {
         return this.accountType;
     }
 
-    public Long getBalance() {
+    public double getBalance() {
         return this.balance;
     }
 
-    public void setBalance(Long newBalance) {
+    public void setBalance(double newBalance) {
         this.balance = newBalance;
     }
 

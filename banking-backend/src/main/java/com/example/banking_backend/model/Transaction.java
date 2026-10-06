@@ -3,61 +3,61 @@ package com.example.banking_backend.model;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.Valid;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
+@Entity
+@Table(name = "transactions")
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long transationId;
+    @Column(name = "transaction_id")
+    private Long transactionId;
 
-    @NotNull(message = "Account number failed Spring NotBlank validation")
-    @Column(name = "account_number")
+    @NotNull(message = "Account number is required")
+    @Column(name = "account_number", nullable = false)
     private Long accountNumber;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_type")
     private TransactionType transactionType;
 
-    @NotNull(message = "Amount failed Spring NotBlank validation")
-    @Column(name = "amount")
-    private Long amount;
+    @Min(value = 0, message = "Amount must be greater than or equal to 0")
+    @Column(name = "amount", nullable = false)
+    private double amount;
 
-    @NotNull(message = "Timestamp failed Spring NotBlank validation")
-    @Column(name = "time_stamp")
+    @NotNull(message = "Timestamp is required")
+    @Column(name = "time_stamp", nullable = false)
     private LocalDateTime timestamp;
 
     public Transaction() {
-
     }
 
-    public Transaction(@Valid Long accountNumber, TransactionType transactionType, @Valid Long amount,
-            @Valid LocalDateTime timestamp) {
-        if (accountNumber < 0) {
-            throw new IllegalArgumentException(
-                    "Account Number must be a positive integer. Provided: " + accountNumber);
+    public Transaction(Long accountNumber, TransactionType transactionType, double amount, LocalDateTime timestamp) {
+        if (accountNumber != null && accountNumber < 0) {
+            throw new IllegalArgumentException("Account Number must be positive. Provided: " + accountNumber);
         }
 
         if (amount < 0) {
-            throw new IllegalArgumentException(
-                    "Amount must be a positive integer. Provided: " + amount);
+            throw new IllegalArgumentException("Amount must be positive. Provided: " + amount);
         }
 
         this.accountNumber = accountNumber;
         this.transactionType = transactionType;
         this.amount = amount;
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = (timestamp != null) ? timestamp : LocalDateTime.now();
     }
 
     public Long getId() {
-        return transationId;
+        return this.transactionId;
     }
 
     public Long getAccountNumber() {
@@ -68,7 +68,7 @@ public class Transaction {
         return this.transactionType;
     }
 
-    public Long getAmount() {
+    public double getAmount() {
         return this.amount;
     }
 

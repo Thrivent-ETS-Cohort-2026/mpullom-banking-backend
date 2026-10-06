@@ -2,12 +2,14 @@ package com.example.banking_backend.model;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
+@Entity 
 public class Transfer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +25,7 @@ public class Transfer {
 
     @NotNull(message = "Amount failed Spring NotBlank validation")
     @Column(name = "amount")
-    private Long amount;
+    private double amount;
 
     @NotNull(message = "Timestamp failed Spring NotBlank validation")
     @Column(name = "time_stamp")
@@ -33,7 +35,7 @@ public class Transfer {
 
     }
 
-    public Transfer(@Valid Long senderAccountNumber, @Valid Long receiverAccountNumber, @Valid Long amount, @Valid LocalDateTime timestamp) {
+    public Transfer(@Valid Long senderAccountNumber, @Valid Long receiverAccountNumber, @Valid double amount, @Valid LocalDateTime timestamp) {
         if (senderAccountNumber < 0) {
             throw new IllegalArgumentException(
                     "Sender account number must be a positive integer. Provided: " + senderAccountNumber);
@@ -66,7 +68,7 @@ public class Transfer {
         return this.receiverAccountNumber;
     }
 
-    public Long getAmount() {
+    public double getAmount() {
         return this.amount;
     }
 

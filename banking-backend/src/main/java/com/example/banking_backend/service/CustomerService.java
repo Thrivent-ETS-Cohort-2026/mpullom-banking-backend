@@ -3,18 +3,18 @@ package com.example.banking_backend.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.banking_backend.dto.CustomerRequest;
 import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.Customer;
-import com.example.banking_backend.model.CustomerRequest;
 import com.example.banking_backend.repository.CustomerRepository;
 
-import jakarta.transaction.Transactional;
-
-@Service 
+@Service
 public class CustomerService {
-    private CustomerRepository customers;
-    private AccountService accountService;
+
+    private final CustomerRepository customers;
+    private final AccountService accountService;
 
     public CustomerService(CustomerRepository customers, AccountService accountService) {
         this.customers = customers;
@@ -23,54 +23,50 @@ public class CustomerService {
 
     @Transactional
     public Customer createCustomer(CustomerRequest newCustomer) {
-        Customer account = new Customer(
-                newCustomer.getFirstName(),
-                newCustomer.getLastName(),
-                newCustomer.getEmail(),
-                newCustomer.getPhoneNumber());
+        Customer customer = new Customer(
+                newCustomer.firstName(),
+                newCustomer.lastName(),
+                newCustomer.email(),
+                newCustomer.phoneNumber());
 
-        customers.save(account);
-
-        return account;
+        return customers.save(customer);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Customer> getCustomers() {
         return customers.findAll();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Customer getCustomerById(Long customerId) {
-        Customer customer = customers.findById(customerId)
+        return customers.findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Customer " + customerId + " not found"));
-        return customer;
     }
 
-    // Validate Email
     @Transactional
     public Customer updateCustomer(Long customerId, CustomerRequest customerUpdates) {
         Customer customer = customers.findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Customer " + customerId + " not found"));
-        if (customerUpdates.getFirstName() != null && !customerUpdates.getFirstName().isBlank()) {
-            customer.setFirstName(customerUpdates.getFirstName());
+
+        if (customerUpdates.firstName() != null && !customerUpdates.firstName().isBlank()) {
+            customer.setFirstName(customerUpdates.firstName());
         }
 
-        if (customerUpdates.getLastName() != null && !customerUpdates.getLastName().isBlank()) {
-            customer.setLastName(customerUpdates.getLastName());
+        if (customerUpdates.lastName() != null && !customerUpdates.lastName().isBlank()) {
+            customer.setLastName(customerUpdates.lastName());
         }
 
-        if (customerUpdates.getEmail() != null && !customerUpdates.getEmail().isBlank()) {
-            customer.setEmail(customerUpdates.getEmail());
+        if (customerUpdates.email() != null && !customerUpdates.email().isBlank()) {
+            customer.setEmail(customerUpdates.email());
         }
 
-        if (customerUpdates.getPhoneNumber() != null && !customerUpdates.getPhoneNumber().isBlank()) {
-            customer.setPhoneNumber(customerUpdates.getPhoneNumber());
+        if (customerUpdates.phoneNumber() != null && !customerUpdates.phoneNumber().isBlank()) {
+            customer.setPhoneNumber(customerUpdates.phoneNumber());
         }
 
-        return customer;
+        return customers.save(customer);
     }
 
-    // Validate customer has no money in accounts before deleting
     @Transactional
     public void deleteCustomer(Long customerId) {
         Customer customer = customers.findById(customerId)
@@ -79,9 +75,8 @@ public class CustomerService {
         customers.delete(customer);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Account> getCustomerAccounts(Long customerId) {
-        List<Account>  customerAccounts = accountService.getAccountsByCustomerId(customerId);
-        return customerAccounts;
+        return accountService.getAccountsByCustomerId(customerId);
     }
 }

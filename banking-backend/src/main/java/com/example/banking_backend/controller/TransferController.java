@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.banking_backend.dto.TransferRequest;
 import com.example.banking_backend.model.Transfer;
-import com.example.banking_backend.model.TransferRequest;
 import com.example.banking_backend.service.TransferService;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -23,7 +23,7 @@ public class TransferController {
     }
 
     // /api/transfers	POSt
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Transfer> createAccount(@RequestBody TransferRequest newTransfer) {
         Transfer savedTransfer = transferService.transferFunds(newTransfer);
         return new ResponseEntity<>(savedTransfer, HttpStatus.CREATED);

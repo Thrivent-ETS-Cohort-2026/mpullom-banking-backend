@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.banking_backend.dto.CustomerRequest;
 import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.Customer;
-import com.example.banking_backend.model.CustomerRequest;
 import com.example.banking_backend.service.CustomerService;
 
 @RestController
@@ -29,7 +29,7 @@ public class CustomerController {
         return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<Customer>> getCustomers() {
         return ResponseEntity.ok(customerService.getCustomers());
     }
@@ -52,7 +52,7 @@ public class CustomerController {
     }
 
     // /api/customers/{id}/accounts GET
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/accounts")
     public ResponseEntity<List<Account>> getCustomerAccounts(@PathVariable Long id) {
         return ResponseEntity.ok(customerService.getCustomerAccounts(id));
     }

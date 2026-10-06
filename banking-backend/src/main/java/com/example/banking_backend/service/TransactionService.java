@@ -1,42 +1,55 @@
 package com.example.banking_backend.service;
 
-import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.banking_backend.dto.TransactionRequest;
+import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.Transaction;
-import com.example.banking_backend.model.TransactionRequest;
 import com.example.banking_backend.model.TransactionType;
+import com.example.banking_backend.repository.AccountRepository;
 import com.example.banking_backend.repository.TransactionRepository;
 
-import jakarta.transaction.Transactional;
-
-@Service 
+@Service
 public class TransactionService {
-    private TransactionRepository transactions;
-    private AccountService accountService;
 
-    public TransactionService(TransactionRepository transactions, AccountService accountService) {
-        this.transactions = transactions;
-        this.accountService = accountService;
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
+
+    public TransactionService(TransactionRepository transactionRepository, AccountRepository accountRepository) {
+        this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
     }
 
     @Transactional
-    public Transaction createTransaction(TransactionRequest newTransaction) {
-        Transaction transaction = new Transaction(
-                newTransaction.getAccountNumber(),
-                newTransaction.getTransactionType(),
-                newTransaction.getAmount(),
-                newTransaction.getTimestamp());
+    public Transaction createTransaction(TransactionRequest request) {
+        Account account = accountRepository.findById(request.accountNumber())
+                .orElseThrow(() -> new IllegalArgumentException("Account not found with number: " + request.accountNumber()));
 
-        transactions.save(transaction);
-        
-        if (newTransaction.getTransactionType() == TransactionType.DEPOSIT){
-            accountService.modifyBalance(newTransaction.getAccountNumber(), newTransaction.getAmount());
+        if (request.amount() == null || request.amount() <= 0) {
+            throw new IllegalArgumentException("Transaction amount must be greater than zero.");
         }
-        else if (newTransaction.getTransactionType() == TransactionType.WITHDRAWL){
-            accountService.modifyBalance(newTransaction.getAccountNumber(), -newTransaction.getAmount());
+
+        if (request.transactionType() == TransactionType.WITHDRAWL) {
+            if (account.getBalance() < request.amount()) {
+                throw new IllegalStateException("Insufficient funds for withdrawal.");
+            }
+            account.setBalance(account.getBalance() - request.amount());
+        } else if (request.transactionType() == TransactionType.DEPOSIT) {
+            account.setBalance(account.getBalance() + request.amount());
         }
-        ;
-        
-        return transaction;
+
+        accountRepository.save(account);
+
+        Transaction transaction = new Transaction(
+            account.getAccountNumber(), 
+            request.transactionType(),
+            request.amount(),
+            (request.timestamp() != null) ? request.timestamp() : LocalDateTime.now()
+        );
+
+        return transactionRepository.save(transaction);
     }
 }
