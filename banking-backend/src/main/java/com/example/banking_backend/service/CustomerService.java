@@ -16,8 +16,10 @@ public class CustomerService {
     private CustomerRepository customers;
     private AccountService accountService;
 
-    public CustomerService() {
-    };
+    public CustomerService(CustomerRepository customers, AccountService accountService) {
+        this.customers = customers;
+        this.accountService = accountService;
+    }
 
     @Transactional
     public Customer createCustomer(CustomerRequest newCustomer) {

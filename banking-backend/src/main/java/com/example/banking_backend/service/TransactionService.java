@@ -12,7 +12,8 @@ import jakarta.transaction.Transactional;
 public class TransactionService {
     private TransactionRepository transactions;
 
-    public TransactionService() {
+    public TransactionService(TransactionRepository transactions) {
+        this.transactions = transactions;
     }
 
     @Transactional
@@ -24,6 +25,7 @@ public class TransactionService {
                 newTransaction.getTimestamp());
 
         transactions.save(transaction);
+        
 
         return transaction;
     }

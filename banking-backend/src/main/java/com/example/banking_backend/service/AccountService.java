@@ -15,8 +15,8 @@ import jakarta.transaction.Transactional;
 public class AccountService {
     private AccountRepository accounts;
 
-    public AccountService() {
-
+    public AccountService(AccountRepository accounts) {
+        this.accounts = accounts;
     }
 
     @Transactional

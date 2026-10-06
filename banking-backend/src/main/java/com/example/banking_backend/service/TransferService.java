@@ -13,7 +13,9 @@ public class TransferService {
     private TransferRepository transfers;
     private AccountService accountService;
 
-    public TransferService() {
+    public TransferService(TransferRepository transfers, AccountService accountService) {
+        this.transfers = transfers;
+        this.accountService = accountService;
     }
 
     @Transactional 
