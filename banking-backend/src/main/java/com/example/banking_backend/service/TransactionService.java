@@ -1,11 +1,14 @@
 package com.example.banking_backend.service;
 
+import org.springframework.stereotype.Service;
+
 import com.example.banking_backend.model.Transaction;
 import com.example.banking_backend.model.TransactionRequest;
 import com.example.banking_backend.repository.TransactionRepository;
 
 import jakarta.transaction.Transactional;
 
+@Service 
 public class TransactionService {
     private TransactionRepository transactions;
 

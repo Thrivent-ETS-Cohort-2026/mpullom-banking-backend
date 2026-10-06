@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -34,7 +35,7 @@ public class Customer {
     public Customer(){
         
     }
-    public Customer(String firstName, String lastName, String email, String phoneNumber) {
+    public Customer(@Valid String firstName, @Valid String lastName, @Valid String email, @Valid String phoneNumber) {
 
         if (firstName == null || firstName.isBlank()) {
             throw new IllegalArgumentException("First name cannot be null or empty.");

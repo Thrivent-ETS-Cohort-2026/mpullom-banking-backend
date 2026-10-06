@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -32,7 +33,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(AccountType accountType, Long initialBalance, AccountStatus accountStatus) {
+    public Account(AccountType accountType, @Valid Long initialBalance, AccountStatus accountStatus) {
         this.accountType = accountType;
         this.balance = initialBalance;
         this.accountStatus = accountStatus;

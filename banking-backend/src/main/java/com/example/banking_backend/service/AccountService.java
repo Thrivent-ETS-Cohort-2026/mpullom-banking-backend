@@ -1,5 +1,9 @@
 package com.example.banking_backend.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.AccountRequest;
 import com.example.banking_backend.model.AccountStatus;
@@ -7,6 +11,7 @@ import com.example.banking_backend.repository.AccountRepository;
 
 import jakarta.transaction.Transactional;
 
+@Service 
 public class AccountService {
     private AccountRepository accounts;
 
@@ -55,5 +60,11 @@ public class AccountService {
         }
 
         accounts.delete(account);
+    }
+
+        @Transactional
+    public List<Account> getAccountsByCustomerId(Long customerId) {
+        List<Account> customerAccounts = accounts.findByCustomerId(customerId);
+        return customerAccounts;
     }
 }
