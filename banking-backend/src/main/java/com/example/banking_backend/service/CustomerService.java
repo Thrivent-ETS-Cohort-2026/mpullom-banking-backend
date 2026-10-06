@@ -2,8 +2,10 @@ package com.example.banking_backend.service;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.banking_backend.dto.CustomerRequest;
 import com.example.banking_backend.model.Account;
@@ -38,9 +40,10 @@ public class CustomerService {
     }
 
     @Transactional(readOnly = true)
-    public Customer getCustomerById(Long customerId) {
-        return customers.findById(customerId)
-                .orElseThrow(() -> new IllegalArgumentException("Customer " + customerId + " not found"));
+    public Customer getCustomerById(Long id) {
+        return customers.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Customer not found with id: " + id));
     }
 
     @Transactional

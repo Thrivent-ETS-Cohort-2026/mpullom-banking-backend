@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.banking_backend.dto.AccountRequest;
@@ -48,7 +49,7 @@ public class AccountController {
     @PutMapping("/{acctNo}/status")
     public ResponseEntity<Account> updateAccountStatus(
             @PathVariable Long acctNo,
-            @Valid @RequestBody AccountStatus newStatus) {
+            @RequestParam AccountStatus newStatus) {
         Account savedAccount = accountService.updateAccountStatus(acctNo, newStatus);
         return ResponseEntity.ok(savedAccount);
     }

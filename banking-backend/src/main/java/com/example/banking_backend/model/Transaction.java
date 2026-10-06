@@ -9,32 +9,25 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "transactions")
 public class Transaction {
 
-    @Id
+@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "transaction_id")
     private Long transactionId;
 
-    @NotNull(message = "Account number is required")
     @Column(name = "account_number", nullable = false)
     private Long accountNumber;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type")
+    @Column(name = "transaction_type", nullable = false)
     private TransactionType transactionType;
 
-    @Min(value = 0, message = "Amount must be greater than or equal to 0")
     @Column(name = "amount", nullable = false)
-    private double amount;
+    private Double amount;
 
-    @NotNull(message = "Timestamp is required")
     @Column(name = "time_stamp", nullable = false)
     private LocalDateTime timestamp;
 

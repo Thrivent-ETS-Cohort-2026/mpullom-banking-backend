@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -13,29 +12,31 @@ import jakarta.validation.constraints.NotBlank;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "customer_id")
     private Long id;
 
-    @NotBlank(message = "First name failed Spring NotBlank validation")
-    @Column(name = "first_name")
+    @NotBlank(message = "First name is required")
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @NotBlank(message = "Last name failed Spring NotBlank validation")
-    @Column(name = "last_name")
+    @NotBlank(message = "Last name is required")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @NotBlank(message = "Email failed Spring NotBlank validation")
+    @NotBlank(message = "Email is required")
     @Email(message = "Invalid email syntax")
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @NotBlank(message = "Phone Number failed Spring NotBlank validation")
-    @Column(name = "phone_number")
+    @NotBlank(message = "Phone Number is required")
+    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
-    
-    public Customer(){
-        
+
+    public Customer() {
+
     }
-    public Customer(@Valid String firstName, @Valid String lastName, @Valid String email, @Valid String phoneNumber) {
+
+    public Customer(String firstName, String lastName, String email, String phoneNumber) {
 
         if (firstName == null || firstName.isBlank()) {
             throw new IllegalArgumentException("First name cannot be null or empty.");

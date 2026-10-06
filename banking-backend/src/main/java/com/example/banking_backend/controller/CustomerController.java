@@ -23,8 +23,11 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
-    private CustomerService customerService;
+    private final CustomerService customerService;
 
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@Valid @RequestBody CustomerRequest newCustomer) {
         Customer savedCustomer = customerService.createCustomer(newCustomer);

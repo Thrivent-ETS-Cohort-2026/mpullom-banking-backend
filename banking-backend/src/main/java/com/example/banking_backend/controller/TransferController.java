@@ -17,12 +17,12 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/transfers")
 public class TransferController {
 
-    private TransferService transferService;
+    private final TransferService transferService;
 
     public TransferController(TransferService transferService) {
         this.transferService = transferService;
     }
-    
+
     @PostMapping
     public ResponseEntity<Transfer> createAccount(@Valid @RequestBody TransferRequest newTransfer) {
         Transfer savedTransfer = transferService.transferFunds(newTransfer);

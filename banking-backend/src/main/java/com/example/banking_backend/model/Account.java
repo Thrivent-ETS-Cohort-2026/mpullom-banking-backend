@@ -12,18 +12,21 @@ import jakarta.persistence.Id;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_number")
     private Long accountNumber;
 
-    @Column(name = "customer_id")
+    @Column(name = "customer_id", nullable = false)
     private Long customerId;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "account_type", nullable = false)
     private AccountType accountType;
 
-    @Column(name = "balance")
+    @Column(name = "balance", nullable = false)
     private double balance;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "account_status", nullable = false)
     private AccountStatus accountStatus;
 
     public Account() {
