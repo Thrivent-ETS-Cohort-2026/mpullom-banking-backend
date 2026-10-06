@@ -51,6 +51,10 @@ public class Account {
         return this.balance;
     }
 
+    public void setBalance(Long newBalance) {
+        this.balance = newBalance;
+    }
+
     public AccountStatus getAccountStatus() {
         return this.accountStatus;
     }

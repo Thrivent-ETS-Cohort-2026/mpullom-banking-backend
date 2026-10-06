@@ -11,7 +11,7 @@ import com.example.banking_backend.repository.AccountRepository;
 
 import jakarta.transaction.Transactional;
 
-@Service 
+@Service
 public class AccountService {
     private AccountRepository accounts;
 
@@ -62,9 +62,17 @@ public class AccountService {
         accounts.delete(account);
     }
 
-        @Transactional
+    @Transactional
     public List<Account> getAccountsByCustomerId(Long customerId) {
         List<Account> customerAccounts = accounts.findByCustomerId(customerId);
         return customerAccounts;
+    }
+
+    @Transactional
+    public Account modifyBalance(Long customerId, Long change) {
+        Account account = getAccountByNum(customerId);
+        account.setBalance(account.getBalance() + change);
+        accounts.save(account);
+        return account;
     }
 }
