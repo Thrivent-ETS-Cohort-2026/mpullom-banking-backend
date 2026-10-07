@@ -5,16 +5,12 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.banking_backend.dto.CustomerRequest;
 import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.Customer;
 import com.example.banking_backend.repository.CustomerRepository;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class CustomerService {
