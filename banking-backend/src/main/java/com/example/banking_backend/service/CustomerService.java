@@ -5,12 +5,16 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.banking_backend.dto.CustomerRequest;
 import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.Customer;
 import com.example.banking_backend.repository.CustomerRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class CustomerService {
@@ -74,7 +78,6 @@ public class CustomerService {
     public void deleteCustomer(Long customerId) {
         Customer customer = customers.findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Customer " + customerId + " not found"));
-        
         customers.delete(customer);
     }
 
@@ -82,4 +85,43 @@ public class CustomerService {
     public List<Account> getCustomerAccounts(Long customerId) {
         return accountService.getAccountsByCustomerId(customerId);
     }
+
+    // public Customer validateCustomer(Long customerId) {
+    // Customer customer = customers.findById(customerId)
+    // .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+    // "Customer not found"));
+
+    // Long currentUserId = getCurrentUserIdFromRequest();
+
+    // if (!customerId.equals(currentUserId)) {
+    // throw new ResponseStatusException(
+    // HttpStatus.FORBIDDEN,
+    // "Current user is not authorized to make this call");
+    // }
+
+    // return customer;
+    // }
+
+    // private Long getCurrentUserIdFromRequest() {
+    // ServletRequestAttributes attributes = (ServletRequestAttributes)
+    // RequestContextHolder.getRequestAttributes();
+
+    // if (attributes == null) {
+    // throw new ResponseStatusException(
+    // HttpStatus.INTERNAL_SERVER_ERROR,
+    // "No active request context found");
+    // }
+
+    // HttpServletRequest request = attributes.getRequest();
+
+    // String currentId = request.getParameter("userId");
+
+    // if (currentId == null || currentId.isBlank()) {
+    // throw new ResponseStatusException(
+    // HttpStatus.UNAUTHORIZED,
+    // "Missing user information");
+    // }
+
+    // return Long.parseLong(currentId);
+    // }
 }

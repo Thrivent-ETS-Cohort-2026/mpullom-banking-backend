@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.banking_backend.dto.CustomerRequest;
@@ -28,6 +29,7 @@ public class CustomerController {
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
+
     @PostMapping
     public ResponseEntity<Customer> createCustomer(@Valid @RequestBody CustomerRequest newCustomer) {
         Customer savedCustomer = customerService.createCustomer(newCustomer);
@@ -45,7 +47,8 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateAccountStatus(@PathVariable Long id, @Valid @RequestBody CustomerRequest customerUpdates) {
+    public ResponseEntity<Customer> updateAccountStatus(@PathVariable Long id,
+            @Valid @RequestBody CustomerRequest customerUpdates) {
         Customer savedCustomer = customerService.updateCustomer(id, customerUpdates);
         return ResponseEntity.ok(savedCustomer);
     }

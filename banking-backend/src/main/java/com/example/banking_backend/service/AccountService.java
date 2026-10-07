@@ -86,8 +86,6 @@ public class AccountService {
 
         Long currentUserId = getCurrentUserIdFromRequest();
 
-        System.out.println(currentUserId);
-        System.out.println(account.getCustomerId());
         if (!account.getCustomerId().equals(currentUserId)) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
