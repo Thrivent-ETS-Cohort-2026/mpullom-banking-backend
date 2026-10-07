@@ -74,7 +74,7 @@ public class CustomerService {
     public void deleteCustomer(Long customerId) {
         Customer customer = customers.findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Customer " + customerId + " not found"));
-
+        
         customers.delete(customer);
     }
 
