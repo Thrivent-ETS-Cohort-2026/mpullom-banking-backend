@@ -9,14 +9,13 @@ import com.example.banking_backend.dto.AccountRequest;
 import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.AccountStatus;
 import com.example.banking_backend.repository.AccountRepository;
-import com.example.banking_backend.repository.CustomerRepository;
 
 @Service
 public class AccountService {
 
     private final AccountRepository accounts;
 
-    public AccountService(AccountRepository accounts, CustomerRepository customerRepository) {
+    public AccountService(AccountRepository accounts) {
         this.accounts = accounts;
     }
 
@@ -65,7 +64,7 @@ public class AccountService {
     @Transactional
     public Account modifyBalance(Long accountNumber, Long change) {
         Account account = getAccountByNum(accountNumber);
-        
+
         double newBalance = account.getBalance() + change;
         if (newBalance < 0) {
             throw new IllegalArgumentException("Insufficient funds. Operation would result in a negative balance.");

@@ -7,14 +7,11 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public record AccountRequest(
-        @NotNull(message = "Customer ID is required")
-        Long customerId,
+        @NotNull(message = "Account type is required") AccountType accountType,
 
-        @NotNull(message = "Account type is required")
-        AccountType accountType,
+        @NotNull(message = "Customer ID is required") Long customerId,
 
-        @Min(value = 0, message = "Initial balance cannot be negative")
-        double initialBalance,
+        @Min(value = 0, message = "Initial balance cannot be negative") double initialBalance,
 
         AccountStatus accountStatus) {
 

@@ -34,6 +34,7 @@ public class Account {
 
     public Account(AccountType accountType, Long customerId, double initialBalance, AccountStatus accountStatus) {
         this.accountType = accountType;
+        this.customerId = customerId;
         this.balance = initialBalance;
         this.accountStatus = accountStatus;
     }

@@ -15,19 +15,15 @@ public class Transfer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transferId;
 
-    @NotNull(message = "Sender number failed Spring NotBlank validation")
     @Column(name = "sender")
     private Long senderAccountNumber;
 
-    @NotNull(message = "Receiver number failed Spring NotBlank validation")
     @Column(name = "receiver")
     private Long receiverAccountNumber;
 
-    @NotNull(message = "Amount failed Spring NotBlank validation")
     @Column(name = "amount")
     private double amount;
 
-    @NotNull(message = "Timestamp failed Spring NotBlank validation")
     @Column(name = "time_stamp")
     private LocalDateTime timestamp;
 
