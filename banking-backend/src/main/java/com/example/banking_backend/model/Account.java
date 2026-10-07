@@ -43,6 +43,10 @@ public class Account {
         return accountNumber;
     }
 
+        public Long getCustomerId() {
+        return this.customerId;
+    }
+
     public AccountType getAccountType() {
         return this.accountType;
     }

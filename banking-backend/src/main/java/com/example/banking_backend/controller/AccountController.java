@@ -55,11 +55,14 @@ public class AccountController {
     }
 
     @DeleteMapping("/{acctNo}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable Long acctNo) {
+    public ResponseEntity<Void> deleteAccount(
+            @PathVariable Long acctNo,
+            @RequestParam Long userId) {
         accountService.deleteAccount(acctNo);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping ("/{acctNo}/transactions")
+
+    @GetMapping("/{acctNo}/transactions")
     public ResponseEntity<List<Transaction>> recordTransaction(@PathVariable Long acctNo) {
         List<Transaction> transactions = transactionService.getTransactionsByAccountNum(acctNo);
         return ResponseEntity.ok(transactions);

@@ -2,13 +2,19 @@ package com.example.banking_backend.service;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.banking_backend.dto.AccountRequest;
 import com.example.banking_backend.model.Account;
 import com.example.banking_backend.model.AccountStatus;
 import com.example.banking_backend.repository.AccountRepository;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class AccountService {
@@ -47,7 +53,7 @@ public class AccountService {
 
     @Transactional
     public void deleteAccount(Long accountNumber) {
-        Account account = getAccountByNum(accountNumber);
+        Account account = validateAccount(accountNumber);;
 
         if (account.getBalance() != 0) {
             throw new IllegalStateException("Cannot delete account. The balance must be zero.");
@@ -67,10 +73,49 @@ public class AccountService {
 
         double newBalance = account.getBalance() + change;
         if (newBalance < 0) {
-            throw new IllegalArgumentException("Insufficient funds. Operation would result in a negative balance.");
+            throw new IllegalArgumentException("Insufficient funds");
         }
 
         account.setBalance(newBalance);
         return accounts.save(account);
+    }
+
+    public Account validateAccount(Long accountNumber) {
+        Account account = accounts.findById(accountNumber)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
+
+        Long currentUserId = getCurrentUserIdFromRequest();
+
+        System.out.println(currentUserId);
+        System.out.println(account.getCustomerId());
+        if (!account.getCustomerId().equals(currentUserId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Current user is not authorized to make this call");
+        }
+
+        return account;
+    }
+
+    private Long getCurrentUserIdFromRequest() {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        if (attributes == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No active request context found");
+        }
+
+        HttpServletRequest request = attributes.getRequest();
+
+        String currentId= request.getParameter("userId");
+
+        if (currentId == null || currentId.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Missing user information");
+        }
+
+        return Long.parseLong(currentId);
     }
 }
