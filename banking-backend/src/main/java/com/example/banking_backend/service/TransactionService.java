@@ -1,8 +1,11 @@
 package com.example.banking_backend.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.criteria.Predicate;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,5 +69,45 @@ public class TransactionService {
             throw new IllegalArgumentException("Account number cannot be null.");
         }
         return transactions.findByAccountNumber(accountNumber);
+    }
+
+    public List<Transaction> filterTransactions(
+            Long accountNo,
+            TransactionType type,
+            LocalDateTime fromDate,
+            LocalDateTime toDate,
+            Double minAmount,
+            Double maxAmount) {
+        Specification<Transaction> spec = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (accountNo != null) {
+                predicates.add(criteriaBuilder.equal(root.get("accountNumber"), accountNo));
+            }
+
+            if (type != null) {
+                predicates.add(criteriaBuilder.equal(root.get("transactionType"), type));
+            }
+
+            if (fromDate != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("timestamp"), fromDate));
+            }
+
+            if (toDate != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("timestamp"), toDate));
+            }
+
+            if (minAmount != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("amount"), minAmount));
+            }
+
+            if (maxAmount != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("amount"), maxAmount));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        return transactions.findAll(spec);
     }
 }
